@@ -15,6 +15,7 @@ ui.init(getStarted);
 
 // Play note and update indicators
 noteEmitter.on("play", ({ midiNote }) => {
+  console.log(midiNote)
   engine.render(synth.playNote(midiNote));
   ui.setMIDINote(midiNote);
   ui.setFrequency(computeFrequency(midiNote));
