@@ -3,6 +3,7 @@
 */
 
 import { el } from "@elemaudio/core";
+import { PianoVoice } from "./pianoVoice.js";
 
 export class Synth {
   voices = [];
@@ -20,7 +21,7 @@ export class Synth {
     // Add note to voices after removing previous instances.
     this.voices = this.voices
       .filter((voice) => voice.key !== key)
-      .concat({ gate: 1, freq, key })
+      .concat(new PianoVoice(key, 1, freq))
       .slice(-8);
 
     return synth(this.voices);
@@ -64,58 +65,11 @@ export function computeFrequency(midiNote) {
 
 /** Sum voices and reduce overall amplitude.
  *
- * @param {ElemNode} voices
+ * @param {PianoVoice[]} voices
  * @returns {ElemNode}
  */
 function synth(voices) {
-  return el.mul(el.add(...voices.map((voice) => synthVoice(voice))), 0.1);
-}
-
-/** Create a single piano voice with a key, gate, and frequency.
- *
- * @param {number} voice.gate The voice gate, expected to be 0 or 1.
- * @param {number} voice.freq The voice frequency.
- * @param {string} voice.key The node key. Associated with the MIDI note, for example "v69".
- * @returns {ElemNode}
- */
-function synthVoice(voice) {
-  console.log("Voice:", voice);
-  console.log("Gate:", voice.gate);
-  console.log("Freq:", voice.freq);
-  console.log("Key:", voice.key);
-
-  const gate = el.const({ key: `${voice.key}:gate`, value: voice.gate });
-  const freq = el.const({ key: `${voice.key}:freq`, value: voice.freq });
-
-  // ADSR envelope
-  const attack = 0.01;
-  const decay = 0.1;
-  const sustain = 0.5;
-  const release = 0.5;
-
-  const env = el.adsr(
-    attack,
-    decay,
-    sustain,
-    release,
-    gate,
-  );
-  console.log("ADSR Env Attack:", attack);
-  console.log("ADSR Env Decay:", decay);
-  console.log("ADSR Env Sustain:", sustain);
-  console.log("ADSR Env Release:", release);
-  console.log("ADSR Env Gate:", gate);
-
-  // Piano waveform approximation
-  const waveform = el.add(
-    el.cycle(freq),
-    el.mul(0.5, el.cycle(el.mul(freq, 2))),
-    el.mul(0.25, el.cycle(el.mul(freq, 3))),
-    el.mul(0.125, el.cycle(el.mul(freq, 4)))
-  );
-  console.log("Waveform:", waveform);
-
-  return el.mul(gate, el.mul(env, waveform));
+  return el.mul(el.add(...voices.map((voice) => voice.generate())), 0.1);
 }
 
 /** Create silence. We render silence when no voices are active.
