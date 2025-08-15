@@ -1,4 +1,5 @@
 import { Timeline } from './timeline';
+import { Record } from './record';
 
 export class UI {
   constructor(synth, noteEmitter) {
@@ -42,10 +43,25 @@ export class UI {
       controlsDiv.appendChild(stopRecordButton);
       controlsDiv.appendChild(playRecordButton);
 
+      // Event listeners for play and stop buttons
+      playButton.addEventListener('click', () => {
+        const midiNote = 60; // Example MIDI note number for C4
+        this.synth.playNote(midiNote, this.selectedTrack);
+        this.addNoteIndicator(this.selectedTrack, Math.random() * 100);
+      });
+
+      stopButton.addEventListener('click', () => {
+        const midiNote = 60; // Example MIDI note number for C4
+        this.synth.stopNote(midiNote, this.selectedTrack);
+      });
+
+      // Initialize Record
+      this.record = new Record(this.noteEmitter);
+
       // Event listeners for record, stop record, and play record buttons
-      recordButton.addEventListener('click', () => this.startRecording());
-      stopRecordButton.addEventListener('click', () => this.stopRecording());
-      playRecordButton.addEventListener('click', () => this.playRecording());
+      recordButton.addEventListener('click', () => this.record.startRecording(this.selectedTrack));
+      stopRecordButton.addEventListener('click', () => this.record.stopRecording());
+      playRecordButton.addEventListener('click', () => this.record.playRecording(this.selectedTrack));
 
       // ADSR Controls
       const adsrControlsDiv = document.createElement('div');
@@ -92,23 +108,6 @@ export class UI {
       // Append elements to main
       mainDiv.appendChild(controlsDiv);
       mainDiv.appendChild(adsrControlsDiv);
-
-      // Event listeners for play and stop buttons
-      playButton.addEventListener('click', () => {
-        const midiNote = 60; // Example MIDI note number for C4
-        this.synth.playNote(midiNote, this.selectedTrack);
-        this.addNoteIndicator(this.selectedTrack, Math.random() * 100);
-      });
-
-      stopButton.addEventListener('click', () => {
-        const midiNote = 60; // Example MIDI note number for C4
-        this.synth.stopNote(midiNote, this.selectedTrack);
-      });
-
-      // Event listeners for record, stop record, and play record buttons
-      recordButton.addEventListener('click', () => this.startRecording());
-      stopRecordButton.addEventListener('click', () => this.stopRecording());
-      playRecordButton.addEventListener('click', () => this.playRecording());
     });
   }
 
@@ -192,50 +191,5 @@ export class UI {
 
     // Update the selected track
     this.selectedTrack = trackId;
-  }
-
-  // Recording methods
-  startRecording() {
-    console.log('Start Recording');
-    this.recording = true;
-    this.recordedEvents = { track1: [], track2: [], track3: [], track4: [] };
-    this.recordingStartTime = performance.now() / 1000; // Store the start time in seconds
-  }
-
-  stopRecording() {
-    console.log('Stop Recording');
-    this.recording = false;
-    this.saveRecording();
-  }
-
-  playRecording() {
-    console.log('Play Recording');
-    this.recording = false;
-    this.noteEmitter.emit("stopAll", {});
-
-    this.recordedEvents[this.selectedTrack].forEach(event => {
-      setTimeout(() => {
-        this.noteEmitter.emit("play", { midiNote: event.midiNote, position: event.position });
-      }, (event.time - this.recordingStartTime) * 1000); // Adjust time based on recording start time
-    });
-  }
-
-  saveRecording() {
-    console.log('Save Recording');
-    const recordedData = this.recordedEvents[this.selectedTrack].map(event => ({
-      midiNote: event.midiNote,
-      time: event.time
-    }));
-
-    const dataStr = JSON.stringify(recordedData);
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-    const link = document.createElement('a');
-    link.href = dataUri;
-    link.download = `${this.selectedTrack}.json`;
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   }
 }

@@ -28,7 +28,8 @@ noteEmitter.on("play", ({ midiNote, position }) => {
     uiInstance.recordedEvents[uiInstance.selectedTrack].push({
       midiNote: midiNote,
       position: position,
-      time: currentTime
+      time: currentTime,
+      state: on
     });
   }
 });
@@ -36,6 +37,15 @@ noteEmitter.on("play", ({ midiNote, position }) => {
 // Stop note
 noteEmitter.on("stop", ({ midiNote }) => {
   engine.render(synth.stopNote(midiNote, uiInstance.selectedTrack));
+  if (uiInstance.recording) {
+    const currentTime = performance.now() / 1000; // Convert milliseconds to seconds
+    uiInstance.recordedEvents[uiInstance.selectedTrack].push({
+      midiNote: midiNote,
+      position: position,
+      time: currentTime,
+      state: off
+    });
+  }
 });
 
 // Stop all notes
