@@ -82,6 +82,11 @@ body {
   position: relative;
 }
 
+/* Selected Track */
+.track.selected {
+  background: linear-gradient(to right, #6495ED, #00BFFF);
+}
+
 .note-indicator {
   width: 20px;
   height: 100%;

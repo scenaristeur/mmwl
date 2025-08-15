@@ -1,13 +1,13 @@
 export class UI {
   constructor(synth) {
     this.synth = synth;
+    this.selectedTrack = 'track1'; // Default selected track
     this.initUI();
   }
 
   initUI() {
     document.addEventListener('DOMContentLoaded', () => {
-      // const header = document.querySelector('#header');
-      const mainDiv = document.getElementById('main')
+      const mainDiv = document.getElementById('main');
 
       // Controls
       const controlsDiv = document.createElement('div');
@@ -67,21 +67,19 @@ export class UI {
       adsrControlsDiv.appendChild(createAdsrControl('release', 'Release:', 0, 1, 0.01, 0.5));
 
       // Append elements to main
-
       mainDiv.appendChild(controlsDiv);
       mainDiv.appendChild(adsrControlsDiv);
-
 
       // Event listeners for play and stop buttons
       playButton.addEventListener('click', () => {
         const midiNote = 60; // Example MIDI note number for C4
-        this.synth.playNote(midiNote);
-        this.addNoteIndicator(`track${Math.floor(Math.random() * 4) + 1}`, Math.random() * 100);
+        this.synth.playNote(midiNote, this.selectedTrack);
+        this.addNoteIndicator(this.selectedTrack, Math.random() * 100);
       });
 
       stopButton.addEventListener('click', () => {
         const midiNote = 60; // Example MIDI note number for C4
-        this.synth.stopNote(midiNote);
+        this.synth.stopNote(midiNote, this.selectedTrack);
       });
     });
   }
@@ -120,7 +118,33 @@ export class UI {
     timelineDiv.appendChild(track3);
     timelineDiv.appendChild(track4);
 
+    // Select the default track
+    this.selectTrack('track1');
 
+    // Track selection
+    document.querySelectorAll('.track').forEach(track => {
+      track.addEventListener('click', () => {
+        console.log(track);
+        this.selectTrack(track.id);
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case '1':
+          this.selectTrack('track1');
+          break;
+        case '2':
+          this.selectTrack('track2');
+          break;
+        case '3':
+          this.selectTrack('track3');
+          break;
+        case '4':
+          this.selectTrack('track4');
+          break;
+      }
+    });
   }
 
   addNoteIndicator(trackId, position) {
@@ -172,5 +196,19 @@ export class UI {
         button.style.backgroundColor = "#1a1a1a";
       }
     });
+  }
+
+  selectTrack(trackId) {
+    // Deselect all tracks
+    document.querySelectorAll('.track').forEach(track => {
+      track.classList.remove('selected');
+    });
+
+    // Select the clicked track
+    const selectedTrack = document.querySelector(`#${trackId}`);
+    selectedTrack.classList.add('selected');
+
+    // Update the selected track
+    this.selectedTrack = trackId;
   }
 }

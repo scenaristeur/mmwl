@@ -17,17 +17,16 @@ uiInstance.init(getStarted);
 // Play note and update indicators
 noteEmitter.on("play", ({ midiNote }) => {
   console.log(midiNote);
-  const trackId = `track${Math.floor(Math.random() * 4) + 1}`;
   const position = Math.random() * 100;
-  engine.render(synth.playNote(midiNote));
+  engine.render(synth.playNote(midiNote, uiInstance.selectedTrack));
   uiInstance.setMIDINote(midiNote);
   uiInstance.setFrequency(computeFrequency(midiNote));
-  uiInstance.addNoteIndicator(trackId, position);
+  uiInstance.addNoteIndicator(uiInstance.selectedTrack, position);
 });
 
 // Stop note
 noteEmitter.on("stop", ({ midiNote }) => {
-  engine.render(synth.stopNote(midiNote));
+  engine.render(synth.stopNote(midiNote, uiInstance.selectedTrack));
 });
 
 // Stop all notes
