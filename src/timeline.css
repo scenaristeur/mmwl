@@ -1,0 +1,65 @@
+/* Timeline */
+#timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: 200px;
+    position: relative;
+    /* Ensure children are positioned relative to the timeline */
+}
+
+.track {
+    width: 100%;
+    height: 10px;
+    background-color: #333;
+    position: relative;
+}
+
+/* Selected Track */
+.track.selected {
+    background: linear-gradient(to right, #6495ED, #00BFFF);
+}
+
+.note-indicator {
+    width: 20px;
+    height: 100%;
+    background-color: #d70d75;
+    position: absolute;
+    left: 0;
+    transition: left 0.1s;
+}
+
+/* Scroll Bar */
+#scroll-bar {
+    position: absolute;
+    height: 100%;
+    width: 2px;
+    background-color: white;
+    transition: left 0.1s;
+    left: 0%;
+}
+
+/* Play Button */
+#timeline-play {
+    position: absolute;
+    top: -50px;
+    /* Position above the timeline */
+    left: 10px;
+}
+
+/* Stop Button */
+#timeline-stop {
+    position: absolute;
+    top: -50px;
+    /* Position above the timeline */
+    left: 60px;
+}
+
+/* Speed Input */
+#timeline-speed {
+    position: absolute;
+    top: -50px;
+    /* Position above the timeline */
+    left: 110px;
+}

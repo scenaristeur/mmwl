@@ -1,6 +1,7 @@
 import Emittery from "emittery";
 import "./layout.css";
 import "./style.css";
+import "./timeline.css";
 import { Engine } from "./audio/engine";
 import { Midi } from "./midi";
 import { UI } from "./ui";
