@@ -5,10 +5,21 @@
 import { el } from "@elemaudio/core";
 
 export class PianoVoice {
-    constructor(key, gate, freq) {
+    constructor(key, gate, freq, attack = 0.01, decay = 0.1, sustain = 0.5, release = 0.5) {
         this.key = key;
         this.gate = gate;
         this.freq = freq;
+        this.attack = attack;
+        this.decay = decay;
+        this.sustain = sustain;
+        this.release = release;
+    }
+
+    updateParams(params) {
+        if (params.attack !== undefined) this.attack = params.attack;
+        if (params.decay !== undefined) this.decay = params.decay;
+        if (params.sustain !== undefined) this.sustain = params.sustain;
+        if (params.release !== undefined) this.release = params.release;
     }
 
     generate() {
@@ -21,22 +32,17 @@ export class PianoVoice {
         const freqNode = el.const({ key: `${this.key}:freq`, value: this.freq });
 
         // ADSR envelope
-        const attack = 0.01;
-        const decay = 0.1;
-        const sustain = 0.5;
-        const release = 0.5;
-
         const env = el.adsr(
-            attack,
-            decay,
-            sustain,
-            release,
+            this.attack,
+            this.decay,
+            this.sustain,
+            this.release,
             gateNode,
         );
-        console.log("ADSR Env Attack:", attack);
-        console.log("ADSR Env Decay:", decay);
-        console.log("ADSR Env Sustain:", sustain);
-        console.log("ADSR Env Release:", release);
+        console.log("ADSR Env Attack:", this.attack);
+        console.log("ADSR Env Decay:", this.decay);
+        console.log("ADSR Env Sustain:", this.sustain);
+        console.log("ADSR Env Release:", this.release);
         console.log("ADSR Env Gate:", gateNode);
 
         // Piano waveform approximation

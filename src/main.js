@@ -1,24 +1,25 @@
 import Emittery from "emittery";
 
 import "./style.css";
-import * as ui from "./ui";
 import { Engine } from "./audio/engine";
 import { Midi } from "./midi";
-import { Synth, computeFrequency } from "./audio/synth";
+import { UI } from "./ui";
+import { computeFrequency, Synth } from "./audio/synth";
 
 const noteEmitter = new Emittery();
 const engine = new Engine();
 const midi = new Midi(noteEmitter);
 const synth = new Synth();
+const uiInstance = new UI(synth);
 
-ui.init(getStarted);
+uiInstance.init(getStarted);
 
 // Play note and update indicators
 noteEmitter.on("play", ({ midiNote }) => {
-  console.log(midiNote)
+  console.log(midiNote);
   engine.render(synth.playNote(midiNote));
-  ui.setMIDINote(midiNote);
-  ui.setFrequency(computeFrequency(midiNote));
+  uiInstance.setMIDINote(midiNote);
+  uiInstance.setFrequency(computeFrequency(midiNote));
 });
 
 // Stop note
@@ -40,7 +41,7 @@ noteEmitter.on("stopAll", () => {
 async function getStarted() {
   await midi.initialize(displayControllers);
   await engine.initialize();
-  ui.getStarted();
+  uiInstance.getStarted();
 }
 
 /** Display available controllers and wire them up with
@@ -50,7 +51,7 @@ async function getStarted() {
  * @param {string} selectedController
  */
 function displayControllers(controllers, selectedController) {
-  ui.setControllers(controllers, selectedController, setController);
+  uiInstance.setControllers(controllers, selectedController, setController);
 }
 
 /** Set the active controller.
@@ -59,5 +60,5 @@ function displayControllers(controllers, selectedController) {
  */
 function setController(controller) {
   midi.setController(controller);
-  ui.selectController(controller);
+  uiInstance.selectController(controller);
 }
