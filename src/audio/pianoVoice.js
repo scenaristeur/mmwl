@@ -16,6 +16,7 @@ export class PianoVoice {
     }
 
     updateParams(params) {
+        console.log("voice", params)
         if (params.attack !== undefined) this.attack = params.attack;
         if (params.decay !== undefined) this.decay = params.decay;
         if (params.sustain !== undefined) this.sustain = params.sustain;

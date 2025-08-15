@@ -6,7 +6,13 @@ import { el } from "@elemaudio/core";
 import { PianoVoice } from "./pianoVoice.js";
 
 export class Synth {
-  voices = [];
+  constructor() {
+    this.voices = [];
+    this.attack = 0.01;
+    this.decay = 0.1;
+    this.sustain = 0.5;
+    this.release = 0.5;
+  }
 
   /** Play a note. Adds note to voices and limits polyphony
    * to eight voices by dropping oldest voices.
@@ -21,7 +27,7 @@ export class Synth {
     // Add note to voices after removing previous instances.
     this.voices = this.voices
       .filter((voice) => voice.key !== key)
-      .concat(new PianoVoice(key, 1, freq))
+      .concat(new PianoVoice(key, 1, freq, this.attack, this.decay, this.sustain, this.release))
       .slice(-8);
 
     return synth(this.voices);
@@ -51,6 +57,17 @@ export class Synth {
     this.voices = [];
 
     return silence();
+  }
+
+  updateParams(params) {
+    if (params.attack !== undefined) this.attack = params.attack;
+    if (params.decay !== undefined) this.decay = params.decay;
+    if (params.sustain !== undefined) this.sustain = params.sustain;
+    if (params.release !== undefined) this.release = params.release;
+
+    this.voices.forEach(voice => {
+      voice.updateParams(params);
+    });
   }
 }
 

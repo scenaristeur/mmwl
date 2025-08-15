@@ -44,11 +44,10 @@ export class UI {
         controlValue.textContent = initialValue;
 
         controlInput.addEventListener('input', (event) => {
+          console.log(event.target.value);
           controlValue.textContent = event.target.value;
-          // Update the corresponding ADSR parameter in PianoVoice
-          this.synth.voices.forEach(voice => {
-            voice.updateParams({ [id]: parseFloat(event.target.value) });
-          });
+          // Update the corresponding ADSR parameter in Synth
+          this.synth.updateParams({ [id]: parseFloat(event.target.value) });
         });
 
         controlDiv.appendChild(controlLabel);
