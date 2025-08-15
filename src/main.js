@@ -22,6 +22,15 @@ noteEmitter.on("play", ({ midiNote, position }) => {
   uiInstance.setMIDINote(midiNote);
   uiInstance.setFrequency(computeFrequency(midiNote));
   uiInstance.addNoteIndicator(uiInstance.selectedTrack, position);
+
+  if (uiInstance.recording) {
+    const currentTime = performance.now() / 1000; // Convert milliseconds to seconds
+    uiInstance.recordedEvents[uiInstance.selectedTrack].push({
+      midiNote: midiNote,
+      position: position,
+      time: currentTime
+    });
+  }
 });
 
 // Stop note

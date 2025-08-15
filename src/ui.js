@@ -24,8 +24,28 @@ export class UI {
       stopButton.id = 'stop';
       stopButton.textContent = 'Stop';
 
+      const recordButton = document.createElement('button');
+      recordButton.id = 'record';
+      recordButton.textContent = 'Record';
+
+      const stopRecordButton = document.createElement('button');
+      stopRecordButton.id = 'stop-record';
+      stopRecordButton.textContent = 'Stop Record';
+
+      const playRecordButton = document.createElement('button');
+      playRecordButton.id = 'play-record';
+      playRecordButton.textContent = 'Play Record';
+
       controlsDiv.appendChild(playButton);
       controlsDiv.appendChild(stopButton);
+      controlsDiv.appendChild(recordButton);
+      controlsDiv.appendChild(stopRecordButton);
+      controlsDiv.appendChild(playRecordButton);
+
+      // Event listeners for record, stop record, and play record buttons
+      recordButton.addEventListener('click', () => this.startRecording());
+      stopRecordButton.addEventListener('click', () => this.stopRecording());
+      playRecordButton.addEventListener('click', () => this.playRecording());
 
       // ADSR Controls
       const adsrControlsDiv = document.createElement('div');
@@ -84,6 +104,11 @@ export class UI {
         const midiNote = 60; // Example MIDI note number for C4
         this.synth.stopNote(midiNote, this.selectedTrack);
       });
+
+      // Event listeners for record, stop record, and play record buttons
+      recordButton.addEventListener('click', () => this.startRecording());
+      stopRecordButton.addEventListener('click', () => this.stopRecording());
+      playRecordButton.addEventListener('click', () => this.playRecording());
     });
   }
 
@@ -167,5 +192,50 @@ export class UI {
 
     // Update the selected track
     this.selectedTrack = trackId;
+  }
+
+  // Recording methods
+  startRecording() {
+    console.log('Start Recording');
+    this.recording = true;
+    this.recordedEvents = { track1: [], track2: [], track3: [], track4: [] };
+    this.recordingStartTime = performance.now() / 1000; // Store the start time in seconds
+  }
+
+  stopRecording() {
+    console.log('Stop Recording');
+    this.recording = false;
+    this.saveRecording();
+  }
+
+  playRecording() {
+    console.log('Play Recording');
+    this.recording = false;
+    this.noteEmitter.emit("stopAll", {});
+
+    this.recordedEvents[this.selectedTrack].forEach(event => {
+      setTimeout(() => {
+        this.noteEmitter.emit("play", { midiNote: event.midiNote, position: event.position });
+      }, (event.time - this.recordingStartTime) * 1000); // Adjust time based on recording start time
+    });
+  }
+
+  saveRecording() {
+    console.log('Save Recording');
+    const recordedData = this.recordedEvents[this.selectedTrack].map(event => ({
+      midiNote: event.midiNote,
+      time: event.time
+    }));
+
+    const dataStr = JSON.stringify(recordedData);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+    const link = document.createElement('a');
+    link.href = dataUri;
+    link.download = `${this.selectedTrack}.json`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }
