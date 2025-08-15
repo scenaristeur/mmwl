@@ -43,6 +43,24 @@ export class UI {
       controlsDiv.appendChild(stopRecordButton);
       controlsDiv.appendChild(playRecordButton);
 
+      // Loop checkbox
+      const loopCheckbox = document.createElement('input');
+      loopCheckbox.type = 'checkbox';
+      loopCheckbox.id = 'loop';
+      loopCheckbox.checked = true; // Checked by default
+
+      const loopLabel = document.createElement('label');
+      loopLabel.textContent = 'Loop';
+      loopLabel.setAttribute('for', 'loop');
+
+      controlsDiv.appendChild(loopCheckbox);
+      controlsDiv.appendChild(loopLabel);
+
+      // Event listener for loop checkbox
+      loopCheckbox.addEventListener('change', (event) => {
+        this.record.loop = event.target.checked;
+      });
+
       // Event listeners for play and stop buttons
       playButton.addEventListener('click', () => {
         const midiNote = 60; // Example MIDI note number for C4
@@ -59,9 +77,29 @@ export class UI {
       this.record = new Record(this.noteEmitter);
 
       // Event listeners for record, stop record, and play record buttons
-      recordButton.addEventListener('click', () => this.record.startRecording(this.selectedTrack));
-      stopRecordButton.addEventListener('click', () => this.record.stopRecording());
-      playRecordButton.addEventListener('click', () => this.record.playRecording(this.selectedTrack));
+      recordButton.addEventListener('click', () => {
+        this.record.startRecording(this.selectedTrack);
+        recordButton.classList.add('active');
+      });
+
+      stopRecordButton.addEventListener('click', () => {
+        if (this.record.recording) {
+          this.record.stopRecording();
+          recordButton.classList.remove('active');
+        } else {
+          this.record.stopPlaying();
+          playRecordButton.classList.remove('active');
+        }
+      });
+
+      playRecordButton.addEventListener('click', () => {
+        this.record.playRecording(this.selectedTrack);
+        playRecordButton.classList.add('active');
+      });
+
+      this.noteEmitter.on("stopAll", () => {
+        playRecordButton.classList.remove('active');
+      });
 
       // ADSR Controls
       const adsrControlsDiv = document.createElement('div');

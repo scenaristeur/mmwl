@@ -25,11 +25,11 @@ noteEmitter.on("play", ({ midiNote, position }) => {
 
   if (uiInstance.recording) {
     const currentTime = performance.now() / 1000; // Convert milliseconds to seconds
-    uiInstance.recordedEvents[uiInstance.selectedTrack].push({
+    uiInstance.record.recordedEvents[uiInstance.selectedTrack].push({
       midiNote: midiNote,
       position: position,
-      time: currentTime,
-      state: on
+      time: currentTime - uiInstance.record.recordingStartTime,
+      state: 'on'
     });
   }
 });
@@ -39,11 +39,11 @@ noteEmitter.on("stop", ({ midiNote }) => {
   engine.render(synth.stopNote(midiNote, uiInstance.selectedTrack));
   if (uiInstance.recording) {
     const currentTime = performance.now() / 1000; // Convert milliseconds to seconds
-    uiInstance.recordedEvents[uiInstance.selectedTrack].push({
+    uiInstance.record.recordedEvents[uiInstance.selectedTrack].push({
       midiNote: midiNote,
       position: position,
-      time: currentTime,
-      state: off
+      time: currentTime - uiInstance.record.recordingStartTime,
+      state: 'off'
     });
   }
 });

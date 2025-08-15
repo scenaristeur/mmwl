@@ -4,6 +4,7 @@ export class Record {
         this.recording = false;
         this.recordedEvents = { track1: [], track2: [], track3: [], track4: [] };
         this.recordingStartTime = 0;
+        this.loop = true; // Default loop is true
 
         this.setupEventListeners();
     }
@@ -22,8 +23,7 @@ export class Record {
             }
         });
 
-        this.noteEmitter.on("stop", ({
-            midiNote, position }) => {
+        this.noteEmitter.on("stop", ({ midiNote, position }) => {
             console.log(midiNote);
             if (this.recording) {
                 const currentTime = performance.now() / 1000; // Convert milliseconds to seconds
@@ -51,20 +51,41 @@ export class Record {
         this.saveRecording();
     }
 
+    stopPlaying() {
+        console.log('Stop Playing');
+        this.noteEmitter.emit("stopAll", {});
+
+        // Clear all timeouts
+        this.recordedEvents[this.selectedTrack].forEach(event => {
+            clearTimeout(event.timeoutId);
+        });
+
+        // Clear the loop timeout
+        clearTimeout(this.loopTimeoutId);
+    }
+
     playRecording(selectedTrack) {
         console.log('Play Recording');
         this.recording = false;
         this.noteEmitter.emit("stopAll", {});
 
-        this.recordedEvents[selectedTrack].forEach(event => {
-            setTimeout(() => {
-                if (event.state === 'on') {
-                    this.noteEmitter.emit("play", { midiNote: event.midiNote, position: event.position });
-                } else if (event.state === 'off') {
-                    this.noteEmitter.emit("stop", { midiNote: event.midiNote });
-                }
-            }, event.time * 1000); // Adjust time based on recording start time
-        });
+        const playEvents = () => {
+            this.recordedEvents[selectedTrack].forEach(event => {
+                event.timeoutId = setTimeout(() => {
+                    if (event.state === 'on') {
+                        this.noteEmitter.emit("play", { midiNote: event.midiNote, position: event.position });
+                    } else if (event.state === 'off') {
+                        this.noteEmitter.emit("stop", { midiNote: event.midiNote });
+                    }
+                }, event.time * 1000); // Adjust time based on recording start time
+            });
+
+            if (this.loop) {
+                this.loopTimeoutId = setTimeout(() => playEvents(), this.recordedEvents[selectedTrack][this.recordedEvents[selectedTrack].length - 1].time * 1000);
+            }
+        };
+
+        playEvents();
     }
 
     saveRecording() {

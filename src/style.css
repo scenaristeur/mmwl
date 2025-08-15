@@ -105,3 +105,8 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+/* Active Button */
+button.active {
+  background-color: #d70d75;
+}
