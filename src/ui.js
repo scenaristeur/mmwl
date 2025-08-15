@@ -6,6 +6,10 @@ export class UI {
 
   initUI() {
     document.addEventListener('DOMContentLoaded', () => {
+      // const header = document.querySelector('#header');
+      const mainDiv = document.getElementById('main')
+
+      // Controls
       const controlsDiv = document.createElement('div');
       controlsDiv.id = 'controls';
 
@@ -62,13 +66,17 @@ export class UI {
       adsrControlsDiv.appendChild(createAdsrControl('sustain', 'Sustain:', 0, 1, 0.01, 0.5));
       adsrControlsDiv.appendChild(createAdsrControl('release', 'Release:', 0, 1, 0.01, 0.5));
 
-      document.body.appendChild(controlsDiv);
-      document.body.appendChild(adsrControlsDiv);
+      // Append elements to main
+
+      mainDiv.appendChild(controlsDiv);
+      mainDiv.appendChild(adsrControlsDiv);
+
 
       // Event listeners for play and stop buttons
       playButton.addEventListener('click', () => {
         const midiNote = 60; // Example MIDI note number for C4
         this.synth.playNote(midiNote);
+        this.addNoteIndicator(`track${Math.floor(Math.random() * 4) + 1}`, Math.random() * 100);
       });
 
       stopButton.addEventListener('click', () => {
@@ -86,7 +94,47 @@ export class UI {
 
   getStarted() {
     document.querySelector("#get-started").remove();
-    document.querySelector("#indicators").style.display = "grid";
+    document.querySelector("#layout").style.display = "grid";
+
+    // Timeline with 4 tracks
+    const timelineDiv = document.getElementById('timeline');
+
+    const track1 = document.createElement('div');
+    track1.id = 'track1';
+    track1.className = 'track';
+
+    const track2 = document.createElement('div');
+    track2.id = 'track2';
+    track2.className = 'track';
+
+    const track3 = document.createElement('div');
+    track3.id = 'track3';
+    track3.className = 'track';
+
+    const track4 = document.createElement('div');
+    track4.id = 'track4';
+    track4.className = 'track';
+
+    timelineDiv.appendChild(track1);
+    timelineDiv.appendChild(track2);
+    timelineDiv.appendChild(track3);
+    timelineDiv.appendChild(track4);
+
+
+  }
+
+  addNoteIndicator(trackId, position) {
+    const track = document.querySelector(`#${trackId}`);
+    const noteIndicator = document.createElement('div');
+    noteIndicator.className = 'note-indicator';
+    noteIndicator.style.left = `${position}%`;
+
+    track.appendChild(noteIndicator);
+
+    // Remove the note indicator after a short delay
+    setTimeout(() => {
+      track.removeChild(noteIndicator);
+    }, 5000); // 5 seconds
   }
 
   setMIDINote(note) {

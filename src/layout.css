@@ -1,0 +1,91 @@
+.layout {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: .5fr repeat(2, 1fr) repeat(2, .5fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 2px;
+}
+
+.div1 {
+    grid-area: 1 / 1 / 2 / 13;
+}
+
+.div2 {
+    grid-area: 2 / 1 / 5 / 2;
+}
+
+.div3 {
+    grid-area: 2 / 12 / 5 / 13;
+}
+
+.div4 {
+    grid-area: 5 / 1 / 6 / 13;
+}
+
+.div5 {
+    grid-area: 2 / 2 / 3 / 12;
+}
+
+.div6 {
+    grid-area: 3 / 2 / 5 / 12;
+}
+
+.div7 {
+    grid-area: 3 / 2 / 4 / 7;
+}
+
+.div8 {
+    grid-area: 3 / 7 / 4 / 12;
+}
+
+.div9 {
+    grid-area: 4 / 2 / 5 / 12;
+}
+
+.div10 {
+    grid-area: 3 / 2 / 4 / 3;
+}
+
+.div11 {
+    grid-area: 3 / 3 / 4 / 4;
+}
+
+.div12 {
+    grid-area: 3 / 4 / 4 / 5;
+}
+
+.div13 {
+    grid-area: 3 / 5 / 4 / 6;
+}
+
+.div14 {
+    grid-area: 3 / 6 / 4 / 7;
+}
+
+.div15 {
+    grid-area: 3 / 7 / 4 / 8;
+}
+
+.div16 {
+    grid-area: 3 / 8 / 4 / 9;
+}
+
+.div17 {
+    grid-area: 3 / 9 / 4 / 10;
+}
+
+.div18 {
+    grid-area: 3 / 10 / 4 / 11;
+}
+
+.div19 {
+    grid-area: 3 / 11 / 4 / 12;
+}
+
+.div20 {
+    grid-area: 2 / 2 / 3 / 3;
+}
+
+.div21 {
+    grid-area: 2 / 3 / 3 / 12;
+}

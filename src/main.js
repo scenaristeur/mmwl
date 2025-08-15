@@ -1,5 +1,5 @@
 import Emittery from "emittery";
-
+import "./layout.css";
 import "./style.css";
 import { Engine } from "./audio/engine";
 import { Midi } from "./midi";
@@ -17,9 +17,12 @@ uiInstance.init(getStarted);
 // Play note and update indicators
 noteEmitter.on("play", ({ midiNote }) => {
   console.log(midiNote);
+  const trackId = `track${Math.floor(Math.random() * 4) + 1}`;
+  const position = Math.random() * 100;
   engine.render(synth.playNote(midiNote));
   uiInstance.setMIDINote(midiNote);
   uiInstance.setFrequency(computeFrequency(midiNote));
+  uiInstance.addNoteIndicator(trackId, position);
 });
 
 // Stop note
