@@ -18,16 +18,18 @@ export class Synth {
    * to eight voices by dropping oldest voices.
    *
    * @param {number} midiNote The note to play.
+   * @param {string} trackId The track to play the note on.
+   * @param {number} position The position of the note on the timeline.
    * @returns {ElemNode}
    */
-  playNote(midiNote) {
+  playNote(midiNote, trackId, position) {
     const key = `v${midiNote}`;
     const freq = computeFrequency(midiNote);
 
     // Add note to voices after removing previous instances.
     this.voices = this.voices
       .filter((voice) => voice.key !== key)
-      .concat(new PianoVoice(key, 1, freq, this.attack, this.decay, this.sustain, this.release))
+      .concat(new PianoVoice(key, 1, freq, this.attack, this.decay, this.sustain, this.release, position))
       .slice(-8);
 
     return synth(this.voices);
@@ -36,9 +38,10 @@ export class Synth {
   /** Stop a note. Return silence if last note.
    *
    * @param {number} midiNote The note to stop.
+   * @param {string} trackId The track to stop the note on.
    * @returns {ElemNode}
    */
-  stopNote(midiNote) {
+  stopNote(midiNote, trackId) {
     const key = `v${midiNote}`;
     this.voices = this.voices.filter((voice) => voice.key !== key);
 

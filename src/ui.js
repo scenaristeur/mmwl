@@ -1,6 +1,9 @@
+import { Timeline } from './timeline';
+
 export class UI {
-  constructor(synth) {
+  constructor(synth, noteEmitter) {
     this.synth = synth;
+    this.noteEmitter = noteEmitter;
     this.selectedTrack = 'track1'; // Default selected track
     this.initUI();
   }
@@ -94,57 +97,11 @@ export class UI {
     document.querySelector("#get-started").remove();
     document.querySelector("#layout").style.display = "grid";
 
-    // Timeline with 4 tracks
-    const timelineDiv = document.getElementById('timeline');
-
-    const track1 = document.createElement('div');
-    track1.id = 'track1';
-    track1.className = 'track';
-
-    const track2 = document.createElement('div');
-    track2.id = 'track2';
-    track2.className = 'track';
-
-    const track3 = document.createElement('div');
-    track3.id = 'track3';
-    track3.className = 'track';
-
-    const track4 = document.createElement('div');
-    track4.id = 'track4';
-    track4.className = 'track';
-
-    timelineDiv.appendChild(track1);
-    timelineDiv.appendChild(track2);
-    timelineDiv.appendChild(track3);
-    timelineDiv.appendChild(track4);
+    // Initialize Timeline
+    new Timeline(this);
 
     // Select the default track
     this.selectTrack('track1');
-
-    // Track selection
-    document.querySelectorAll('.track').forEach(track => {
-      track.addEventListener('click', () => {
-        console.log(track);
-        this.selectTrack(track.id);
-      });
-    });
-
-    document.addEventListener('keydown', (event) => {
-      switch (event.key) {
-        case '1':
-          this.selectTrack('track1');
-          break;
-        case '2':
-          this.selectTrack('track2');
-          break;
-        case '3':
-          this.selectTrack('track3');
-          break;
-        case '4':
-          this.selectTrack('track4');
-          break;
-      }
-    });
   }
 
   addNoteIndicator(trackId, position) {

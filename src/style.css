@@ -73,6 +73,8 @@ body {
   gap: 10px;
   width: 100%;
   height: 200px;
+  position: relative;
+  /* Ensure children are positioned relative to the timeline */
 }
 
 .track {
@@ -113,63 +115,47 @@ body {
   justify-content: center;
 }
 
-/* Timeline */
-#timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-  width: 100%;
-  height: 200px;
-}
-
-.track {
-  width: 100%;
-  height: 10px;
-  background-color: #333;
-  position: relative;
-}
-
-.note-indicator {
-  width: 20px;
-  height: 100%;
-  background-color: #d70d75;
+/* Scroll Bar */
+#scroll-bar {
   position: absolute;
-  left: 0;
+  height: 100%;
+  width: 2px;
+  background-color: white;
   transition: left 0.1s;
+  left: 0%;
 }
 
-.card {
-  display: grid;
-  grid-auto-flow: row;
-  grid-auto-columns: 1fr 1fr;
-  padding: 2em;
-  text-align: center;
+/* Play Button */
+#timeline-play {
+  position: absolute;
+  top: -50px;
+  /* Position above the timeline */
+  left: 10px;
 }
 
-#controllers {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
+/* Stop Button */
+#timeline-stop {
+  position: absolute;
+  top: -50px;
+  /* Position above the timeline */
+  left: 60px;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* Speed Input */
+#timeline-speed {
+  position: absolute;
+  top: -50px;
+  /* Position above the timeline */
+  left: 110px;
 }
 
-a:hover {
-  color: #535bf2;
-}
-
+/* Buttons */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
   height: 50px;
   padding: 0.6em 1.2em;
-  /* font-size: 1em; */
+  font-size: 1em;
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
@@ -184,28 +170,4 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* Timeline */
-#timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.track {
-  width: 100%;
-  height: 10px;
-  background-color: #333;
-  position: relative;
-}
-
-.note-indicator {
-  width: 20px;
-  height: 100%;
-  background-color: #d70d75;
-  position: absolute;
-  left: 0;
-  transition: left 0.1s;
 }

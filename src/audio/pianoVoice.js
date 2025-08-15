@@ -5,7 +5,7 @@
 import { el } from "@elemaudio/core";
 
 export class PianoVoice {
-    constructor(key, gate, freq, attack = 0.01, decay = 0.1, sustain = 0.5, release = 0.5) {
+    constructor(key, gate, freq, attack = 0.01, decay = 0.1, sustain = 0.5, release = 0.5, position = 0) {
         this.key = key;
         this.gate = gate;
         this.freq = freq;
@@ -13,6 +13,7 @@ export class PianoVoice {
         this.decay = decay;
         this.sustain = sustain;
         this.release = release;
+        this.position = position;
     }
 
     updateParams(params) {
@@ -31,6 +32,7 @@ export class PianoVoice {
 
         const gateNode = el.const({ key: `${this.key}:gate`, value: this.gate });
         const freqNode = el.const({ key: `${this.key}:freq`, value: this.freq });
+        const positionNode = el.const({ key: `${this.key}:position`, value: this.position });
 
         // ADSR envelope
         const env = el.adsr(
@@ -53,8 +55,13 @@ export class PianoVoice {
             el.mul(0.25, el.cycle(el.mul(freqNode, 3))),
             el.mul(0.125, el.cycle(el.mul(freqNode, 4)))
         );
+
+        // Modulate frequency based on position
+        const modulatedFreqNode = el.add(freqNode, el.mul(0.1, positionNode));
         console.log("Waveform:", waveform);
 
-        return el.mul(gateNode, el.mul(env, waveform));
+        // Use positionNode to adjust the waveform or any other aspect if needed
+        // For now, we'll just return the waveform multiplied by the gate and envelope
+        return el.mul(gateNode, el.mul(env, el.cycle(modulatedFreqNode)));
     }
 }

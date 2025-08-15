@@ -10,15 +10,14 @@ const noteEmitter = new Emittery();
 const engine = new Engine();
 const midi = new Midi(noteEmitter);
 const synth = new Synth();
-const uiInstance = new UI(synth);
+const uiInstance = new UI(synth, noteEmitter);
 
 uiInstance.init(getStarted);
 
 // Play note and update indicators
-noteEmitter.on("play", ({ midiNote }) => {
+noteEmitter.on("play", ({ midiNote, position }) => {
   console.log(midiNote);
-  const position = Math.random() * 100;
-  engine.render(synth.playNote(midiNote, uiInstance.selectedTrack));
+  engine.render(synth.playNote(midiNote, uiInstance.selectedTrack, position));
   uiInstance.setMIDINote(midiNote);
   uiInstance.setFrequency(computeFrequency(midiNote));
   uiInstance.addNoteIndicator(uiInstance.selectedTrack, position);
