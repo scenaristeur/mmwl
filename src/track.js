@@ -1,4 +1,5 @@
 import { Record } from './record';
+import { InstrumentPanel } from './ui/instrumentPanel';
 
 export class Track {
     constructor(id, uiInstance, timelineDiv) {
@@ -72,6 +73,9 @@ export class Track {
         this.controlDiv.appendChild(recordButton);
         this.controlDiv.appendChild(playRecordButton);
 
+        // Append control div to track element
+        this.element.appendChild(this.controlDiv);
+
         // Add scroll bar
         this.element.appendChild(this.scrollBar);
 
@@ -92,6 +96,16 @@ export class Track {
         this.element.addEventListener('click', () => {
             this.uiInstance.selectTrack(`track${this.id}`);
         });
+
+        // Create instrument panel
+        const instrumentPanelContainer = document.createElement('div');
+        instrumentPanelContainer.id = `track-controls-${this.id}`;
+        instrumentPanelContainer.className = 'instrument-panel';
+        this.trackContainer.appendChild(instrumentPanelContainer);
+
+        const instrumentPanel = new InstrumentPanel(this.id, instrumentPanelContainer, this.uiInstance);
+        this.uiInstance.instrumentPanels.push(instrumentPanel);
+        this.uiInstance.synth.setVoice(this.id, instrumentPanel.instruments[this.id === 0 ? 'piano' : this.id === 1 ? 'guitar' : this.id === 2 ? 'bass' : 'percussion']); // Assign different instruments to each track
     }
 
     addNoteIndicator(position) {

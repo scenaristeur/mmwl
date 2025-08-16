@@ -6,6 +6,7 @@ export class UI {
     this.synth = synth;
     this.noteEmitter = noteEmitter;
     this.selectedTrack = 'track1'; // Default selected track
+    this.instrumentPanels = [];
     this.initUI();
   }
 

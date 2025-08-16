@@ -5,7 +5,7 @@
 import { el } from "@elemaudio/core";
 import { Instrument } from './instrument.js';
 
-export class PianoVoice extends Instrument {
+export class PercussionVoice extends Instrument {
     constructor(key, gate, freq, attack = 0.01, decay = 0.1, sustain = 0.5, release = 0.5, position = 0) {
         super(key, gate, freq, attack, decay, sustain, release, position);
     }
@@ -42,13 +42,8 @@ export class PianoVoice extends Instrument {
         console.log("ADSR Env Release:", this.release);
         console.log("ADSR Env Gate:", gateNode);
 
-        // Piano waveform approximation
-        const waveform = el.add(
-            el.cycle(freqNode),
-            el.mul(0.5, el.cycle(el.mul(freqNode, 2))),
-            el.mul(0.25, el.cycle(el.mul(freqNode, 3))),
-            el.mul(0.125, el.cycle(el.mul(freqNode, 4)))
-        );
+        // Percussion waveform approximation
+        const waveform = el.impulse(freqNode);
 
         // Modulate frequency based on position
         const modulatedFreqNode = el.add(freqNode, el.mul(0.1, positionNode));
@@ -56,6 +51,6 @@ export class PianoVoice extends Instrument {
 
         // Use positionNode to adjust the waveform or any other aspect if needed
         // For now, we'll just return the waveform multiplied by the gate and envelope
-        return el.mul(gateNode, el.mul(env, el.cycle(modulatedFreqNode)));
+        return el.mul(gateNode, el.mul(env, waveform));
     }
 }

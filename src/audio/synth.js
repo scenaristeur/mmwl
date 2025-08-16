@@ -3,7 +3,7 @@
 */
 
 import { el } from "@elemaudio/core";
-import { PianoVoice } from "./pianoVoice.js";
+import { PianoVoice, GuitarVoice, BassVoice, PercussionVoice } from "./index.js";
 
 export class Synth {
   constructor() {
@@ -12,6 +12,7 @@ export class Synth {
     this.decay = 0.1;
     this.sustain = 0.5;
     this.release = 0.5;
+    this.voiceMap = new Map(); // Map to store voices for each track
   }
 
   /** Play a note. Adds note to voices and limits polyphony
@@ -26,10 +27,13 @@ export class Synth {
     const key = `v${midiNote}`;
     const freq = computeFrequency(midiNote);
 
+    // Get the voice for the track
+    const voice = this.voiceMap.get(trackId);
+
     // Add note to voices after removing previous instances.
     this.voices = this.voices
-      .filter((voice) => voice.key !== key)
-      .concat(new PianoVoice(key, 1, freq, this.attack, this.decay, this.sustain, this.release, position))
+      .filter((v) => v.key !== key || v !== voice)
+      .concat(new voice.constructor(key, 1, freq, this.attack, this.decay, this.sustain, this.release, position))
       .slice(-8);
 
     return synth(this.voices);
@@ -71,6 +75,15 @@ export class Synth {
     this.voices.forEach(voice => {
       voice.updateParams(params);
     });
+  }
+
+  /** Set the voice for a specific track.
+   *
+   * @param {string} trackId The track ID.
+   * @param {Instrument} voice The instrument to set for the track.
+   */
+  setVoice(trackId, voice) {
+    this.voiceMap.set(trackId, voice);
   }
 }
 
