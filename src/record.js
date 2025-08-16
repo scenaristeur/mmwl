@@ -2,6 +2,7 @@ export class Record {
     constructor(noteEmitter) {
         this.noteEmitter = noteEmitter;
         this.recording = false;
+        this.playing = false; // Added playing variable
         this.recordedEvents = { track1: [], track2: [], track3: [], track4: [] };
         this.recordingStartTime = 0;
         this.loop = true; // Default loop is true
@@ -41,7 +42,9 @@ export class Record {
         console.log('Start Recording');
         this.recording = true;
         this.selectedTrack = selectedTrack;
-        this.recordedEvents = { track1: [], track2: [], track3: [], track4: [] };
+        if (!this.recordedEvents[selectedTrack]) {
+            this.recordedEvents[selectedTrack] = [];
+        }
         this.recordingStartTime = performance.now() / 1000; // Store the start time in seconds
     }
 
@@ -56,18 +59,27 @@ export class Record {
         this.noteEmitter.emit("stopAll", {});
 
         // Clear all timeouts
-        this.recordedEvents[this.selectedTrack].forEach(event => {
-            clearTimeout(event.timeoutId);
-        });
+        if (this.recordedEvents[this.selectedTrack]) {
+            this.recordedEvents[this.selectedTrack].forEach(event => {
+                clearTimeout(event.timeoutId);
+            });
+        }
 
         // Clear the loop timeout
         clearTimeout(this.loopTimeoutId);
+
+        // Set playing to false
+        this.playing = false;
     }
 
     playRecording(selectedTrack) {
         console.log('Play Recording');
         this.recording = false;
         this.noteEmitter.emit("stopAll", {});
+
+        if (!this.recordedEvents[selectedTrack]) {
+            this.recordedEvents[selectedTrack] = [];
+        }
 
         const playEvents = () => {
             this.recordedEvents[selectedTrack].forEach(event => {
@@ -80,12 +92,15 @@ export class Record {
                 }, event.time * 1000); // Adjust time based on recording start time
             });
 
-            if (this.loop) {
+            if (this.loop && this.recordedEvents[selectedTrack].length > 0) {
                 this.loopTimeoutId = setTimeout(() => playEvents(), this.recordedEvents[selectedTrack][this.recordedEvents[selectedTrack].length - 1].time * 1000);
             }
         };
 
         playEvents();
+
+        // Set playing to true
+        this.playing = true;
     }
 
     saveRecording() {

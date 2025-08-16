@@ -146,6 +146,22 @@ export class UI {
       // Append elements to main
       mainDiv.appendChild(controlsDiv);
       mainDiv.appendChild(adsrControlsDiv);
+
+      // Track selection by click
+      document.querySelectorAll('.track').forEach(track => {
+        track.addEventListener('click', (e) => {
+          console.log(e.target.id)
+          this.selectTrack(track.id) + "hg";
+        });
+      });
+
+      // Track selection by keyboard (1-4)
+      document.addEventListener('keydown', (event) => {
+        const trackId = `track${event.key}`;
+        if (['track1', 'track2', 'track3', 'track4'].includes(trackId)) {
+          this.selectTrack(trackId);
+        }
+      });
     });
   }
 

@@ -5,6 +5,7 @@ import "./timeline.css";
 import { Engine } from "./audio/engine";
 import { Midi } from "./midi";
 import { UI } from "./ui";
+import { Timeline } from "./timeline";
 import { computeFrequency, Synth } from "./audio/synth";
 
 const noteEmitter = new Emittery();

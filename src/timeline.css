@@ -9,9 +9,16 @@
     /* Ensure children are positioned relative to the timeline */
 }
 
+.track-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .track {
     width: 100%;
-    height: 10px;
+    height: 30px;
+    /* Multiplied by 3 */
     background-color: #333;
     position: relative;
 }
@@ -31,13 +38,43 @@
 }
 
 /* Scroll Bar */
-#scroll-bar {
+.scroll-bar {
     position: absolute;
     height: 100%;
     width: 2px;
     background-color: white;
     transition: left 0.1s;
     left: 0%;
+}
+
+/* Track Controls */
+.track-controls {
+    display: flex;
+    gap: 5px;
+    position: relative;
+    top: 0;
+}
+
+.track-controls button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    height: 30px;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+.track-controls button:hover {
+    border-color: #d70d75;
+}
+
+.track-controls button:focus,
+.track-controls button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
 }
 
 /* Play Button */
@@ -62,4 +99,93 @@
     top: -50px;
     /* Position above the timeline */
     left: 110px;
+}
+
+/* Record Icon */
+.record-icon {
+    width: 30px;
+    height: 30px;
+    background-color: red;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.record-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    border-radius: 50%;
+}
+
+/* Stop Recording Icon */
+.stop-recording-icon {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(to bottom, red, darkred);
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.stop-recording-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 15px;
+    background-color: black;
+}
+
+/* Play Icon */
+.play-icon {
+    width: 30px;
+    height: 30px;
+    background-color: #1a1a1a;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.play-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 15px solid white;
+}
+
+/* Stop Playing Icon */
+.stop-playing-icon {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(to bottom, #d70d75, #a30d75);
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.stop-playing-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 15px;
+    background-color: black;
 }

@@ -1,17 +1,11 @@
+import { Track } from './track';
+
 export class Timeline {
     constructor(uiInstance) {
         this.uiInstance = uiInstance;
         this.noteEmitter = uiInstance.noteEmitter;
         this.timelineDiv = document.getElementById('timeline');
         this.tracks = [];
-        this.scrollBar = document.createElement('div');
-        this.scrollBar.id = 'scroll-bar';
-        this.scrollBar.style.position = 'absolute';
-        this.scrollBar.style.height = '100%';
-        this.scrollBar.style.width = '2px';
-        this.scrollBar.style.backgroundColor = 'white';
-        this.scrollBar.style.transition = 'left 0.1s';
-        this.scrollBar.style.left = '0%';
         this.speedInput = null;
         this.speed = 1; // Default speed in seconds
         this.intervalId = null;
@@ -21,15 +15,9 @@ export class Timeline {
     init() {
         // Create 4 tracks
         for (let i = 1; i <= 4; i++) {
-            const track = document.createElement('div');
-            track.id = `track${i}`;
-            track.className = 'track';
+            const track = new Track(i, this.uiInstance, this.timelineDiv);
             this.tracks.push(track);
-            this.timelineDiv.appendChild(track);
         }
-
-        // Add scroll bar
-        this.timelineDiv.appendChild(this.scrollBar);
 
         // Add play button
         const playButton = document.createElement('button');
@@ -65,49 +53,46 @@ export class Timeline {
     selectTrack(trackId) {
         // Deselect all tracks
         this.tracks.forEach(track => {
-            track.classList.remove('selected');
+            track.element.classList.remove('selected');
         });
 
         // Select the clicked track
-        const selectedTrack = document.querySelector(`#${trackId}`);
-        selectedTrack.classList.add('selected');
+        const selectedTrack = this.tracks.find(track => track.id === trackId);
+        if (selectedTrack) {
+            selectedTrack.element.classList.add('selected');
+        }
 
         // Update the selected track
         this.uiInstance.selectedTrack = trackId;
     }
 
     addNoteIndicator(trackId, position) {
-        const track = document.querySelector(`#${trackId}`);
-        const noteIndicator = document.createElement('div');
-        noteIndicator.className = 'note-indicator';
-        noteIndicator.style.left = `${position}%`;
-
-        track.appendChild(noteIndicator);
-
-        // Remove the note indicator after a short delay
-        setTimeout(() => {
-            track.removeChild(noteIndicator);
-        }, 5000); // 5 seconds
+        const track = this.tracks.find(track => track.id === trackId);
+        if (track) {
+            track.addNoteIndicator(position);
+        }
     }
 
     startScroll() {
         this.stopScroll(); // Clear any existing interval
         this.intervalId = setInterval(() => {
-            const currentLeft = parseFloat(this.scrollBar.style.left);
-            const newLeft = currentLeft + 0.1 / this.speed; // Adjust speed
+            this.tracks.forEach(track => {
+                const currentLeft = parseFloat(track.scrollBar.style.left);
+                const newLeft = currentLeft + 0.1 / this.speed; // Adjust speed
 
-            if (newLeft >= 100) {
-                this.scrollBar.style.left = '0%';
-            } else {
-                this.scrollBar.style.left = `${newLeft}%`;
-            }
+                if (newLeft >= 100) {
+                    track.scrollBar.style.left = '0%';
+                } else {
+                    track.scrollBar.style.left = `${newLeft}%`;
+                }
 
-            // Emit note position based on scroll bar position
-            const position = newLeft;
-            const midiNote = 60; // Example MIDI note number for C4
-            this.uiInstance.synth.playNote(midiNote, this.uiInstance.selectedTrack, position);
-            this.uiInstance.addNoteIndicator(this.uiInstance.selectedTrack, position);
-            this.noteEmitter.emit("play", { midiNote, position });
+                // Emit note position based on scroll bar position
+                const position = newLeft;
+                const midiNote = 60; // Example MIDI note number for C4
+                this.uiInstance.synth.playNote(midiNote, track.id, position);
+                track.addNoteIndicator(position);
+                this.noteEmitter.emit("play", { midiNote, position });
+            });
         }, 100); // Update every 100ms
     }
 
