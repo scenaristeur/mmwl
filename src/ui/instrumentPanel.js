@@ -17,6 +17,8 @@ export class InstrumentPanel {
             percussion: new PercussionVoice(`track-${trackId}`, 0, 440)
         };
 
+        console.log(`Instruments for track ${this.trackId}:`, this.instruments);
+
         Object.keys(this.instruments).forEach(instrument => {
             const option = document.createElement('option');
             option.value = instrument;

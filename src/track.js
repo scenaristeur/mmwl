@@ -105,7 +105,14 @@ export class Track {
 
         const instrumentPanel = new InstrumentPanel(this.id, instrumentPanelContainer, this.uiInstance);
         this.uiInstance.instrumentPanels.push(instrumentPanel);
-        this.uiInstance.synth.setVoice(this.id, instrumentPanel.instruments[this.id === 0 ? 'piano' : this.id === 1 ? 'guitar' : this.id === 2 ? 'bass' : 'percussion']); // Assign different instruments to each track
+
+        // Check if instruments are properly initialized
+        if (instrumentPanel.instruments) {
+            console.log(`Setting voice for track ${this.id}:`, instrumentPanel.instruments[this.id === 0 ? 'piano' : this.id === 1 ? 'guitar' : this.id === 2 ? 'bass' : 'percussion']);
+            this.uiInstance.synth.setVoice(this.id, instrumentPanel.instruments[this.id === 0 ? 'piano' : this.id === 1 ? 'guitar' : this.id === 2 ? 'bass' : 'percussion']); // Assign different instruments to each track
+        } else {
+            console.error(`Instruments object is undefined for track ${this.id}`);
+        }
     }
 
     addNoteIndicator(position) {
@@ -136,9 +143,16 @@ export class Track {
             // Emit note position based on scroll bar position
             const position = newLeft;
             const midiNote = 60; // Example MIDI note number for C4
-            this.uiInstance.synth.playNote(midiNote, this.id, position);
-            this.addNoteIndicator(position);
-            this.noteEmitter.emit("play", { midiNote, position });
+            const voice = this.uiInstance.synth.voiceMap.get(`track${this.id}`);
+            console.log(`Retrieved voice for track ${this.id} in startScroll:`, voice);
+
+            if (voice) {
+                this.uiInstance.synth.playNote(midiNote, `track${this.id}`, position);
+                this.addNoteIndicator(position);
+                this.noteEmitter.emit("play", { midiNote, position });
+            } else {
+                console.error(`Voice is undefined for track ${this.id} in startScroll`);
+            }
         }, 100); // Update every 100ms
     }
 

@@ -13,6 +13,7 @@ export class Synth {
     this.sustain = 0.5;
     this.release = 0.5;
     this.voiceMap = new Map(); // Map to store voices for each track
+    console.log('Synth initialized with voiceMap:', this.voiceMap);
   }
 
   /** Play a note. Adds note to voices and limits polyphony
@@ -29,6 +30,12 @@ export class Synth {
 
     // Get the voice for the track
     const voice = this.voiceMap.get(trackId);
+    console.log(`Retrieved voice for track ${trackId}:`, voice);
+
+    if (!voice) {
+      console.error(`Voice is undefined for track ${trackId}`);
+      return silence();
+    }
 
     // Add note to voices after removing previous instances.
     this.voices = this.voices

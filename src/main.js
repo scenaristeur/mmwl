@@ -19,6 +19,7 @@ const engine = new Engine();
 const midi = new Midi(noteEmitter);
 const synth = new Synth();
 const uiInstance = new UI(synth, noteEmitter);
+uiInstance.instrumentPanels = []; // Initialize instrumentPanels as an array
 const tracks = [];
 
 for (let i = 0; i < 4; i++) {
